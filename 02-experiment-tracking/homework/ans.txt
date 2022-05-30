@@ -3,3 +3,4 @@ q2 - 4
 q3 - 17
 q4 - default-artifact-root
 q5 - 6.628
+q6 - 6.55
