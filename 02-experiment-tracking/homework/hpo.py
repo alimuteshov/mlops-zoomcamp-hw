@@ -24,11 +24,18 @@ def run(data_path, num_trials):
     X_valid, y_valid = load_pickle(os.path.join(data_path, "valid.pkl"))
 
     def objective(params):
+        with mlflow.start_run():
+            
+            rf = RandomForestRegressor(**params)
+            rf.fit(X_train, y_train)
+            y_pred = rf.predict(X_valid)
+            rmse = mean_squared_error(y_valid, y_pred, squared=False)
 
-        rf = RandomForestRegressor(**params)
-        rf.fit(X_train, y_train)
-        y_pred = rf.predict(X_valid)
-        rmse = mean_squared_error(y_valid, y_pred, squared=False)
+            mlflow.log_param("max_depth", params['max_depth'])
+            mlflow.log_param("n_estimators", params['n_estimators'])
+            mlflow.log_param("min_samples_split", params['min_samples_split'])
+            mlflow.log_param("min_samples_leaf", params['min_samples_leaf'])
+            mlflow.log_metric("RMSE", rmse)
 
         return {'loss': rmse, 'status': STATUS_OK}
 
